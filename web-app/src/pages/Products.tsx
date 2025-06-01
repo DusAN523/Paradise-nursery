@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import { plants } from '../data/plants';
+import { Plant } from '../types';
 import Header from '../components/Header';
 import { useCart } from '../context/CartContext';
 
 const Products: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('All');
+    const [disabledButtons, setDisabledButtons] = useState<number[]>([]);
     const { cart, addToCart } = useCart();
     const categories = ['All', ...new Set(plants.map(plant => plant.category))];
 
     const filteredPlants = selectedCategory === 'All'
         ? plants
         : plants.filter(plant => plant.category === selectedCategory);
+
+    const handleAddToCart = (plant: Plant) => {
+        addToCart(plant);
+        setDisabledButtons(prev => [...prev, plant.id]);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -48,10 +55,14 @@ const Products: React.FC = () => {
                                 <div className="flex justify-between items-center">
                                     <span className="text-green-600 font-bold">${plant.price.toFixed(2)}</span>
                                     <button
-                                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
-                                        onClick={() => addToCart(plant)}
+                                        className={`px-4 py-2 rounded transition-colors ${disabledButtons.includes(plant.id)
+                                                ? 'bg-gray-400 cursor-not-allowed'
+                                                : 'bg-green-600 text-white hover:bg-green-700'
+                                            }`}
+                                        onClick={() => handleAddToCart(plant)}
+                                        disabled={disabledButtons.includes(plant.id)}
                                     >
-                                        Add to Cart
+                                        {disabledButtons.includes(plant.id) ? 'Added to Cart' : 'Add to Cart'}
                                     </button>
                                 </div>
                             </div>

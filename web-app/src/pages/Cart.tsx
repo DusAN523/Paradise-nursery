@@ -9,9 +9,7 @@ const Cart: React.FC = () => {
     const navigate = useNavigate();
 
     const handleCheckout = () => {
-        // Clear the cart before navigating to success page
-        clearCart();
-        navigate('/success');
+        alert('Checkout functionality coming soon!');
     };
 
     return (
